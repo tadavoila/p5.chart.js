@@ -1,0 +1,379 @@
+\documentclass[10pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{enumitem}
+
+% Colors
+\definecolor{darkblue}{RGB}{0, 51, 102}
+\definecolor{codebg}{RGB}{245, 245, 245}
+\definecolor{paramcolor}{RGB}{128, 0, 0}
+
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    urlcolor=darkblue,
+    pdftitle={p5.chart.js Comprehensive Documentation},
+}
+
+\title{\textbf{p5.chart.js Library Documentation}\\ \large Reference Manual of Methods Exposed to the User}
+\author{Siddharth Chattoraj}
+\date{December 12, 2025}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Global Configuration \& State}
+
+The library attaches to the \texttt{p5.prototype}. The following global properties and methods affect the overall behavior of the library.
+
+\subsection{Global Properties}
+These properties are accessible via \texttt{p5.prototype.chart}.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Property} & \textbf{Value / Description} \\
+\midrule
+\texttt{chart.palette} & Array of default hex strings\\
+\texttt{chart.defaultTooltipColumns} & Global default tooltip column specification (Default: \texttt{null}). If set to an array like \texttt{[{col:label,label:Label},{col:value,label:Value}]}, charts will build tooltips from these columns when hovering. \\
+\texttt{chart.defaultSubtitle} & Global default subtitle (Default: \texttt{null}). If a chart does not provide \texttt{options.subtitle}, this value is used. \\
+\texttt{chart.nanPolicy} & Default policy for handling NaN values. Defaults to \texttt{warn}. Options: \texttt{warn}, \texttt{silent}, \texttt{strict}. \\
+\texttt{chart.autoFitCanvas} & Boolean (Default: \texttt{true}). If true, resizes the p5 canvas to match the CSS display size to prevent distortion. \\
+\texttt{chart.inputs} & Internal cache for DOM elements (e.g., Table search inputs). \\
+\texttt{chart.hoverState} & Object storing global tooltip state (\texttt{active}, \texttt{x}, \texttt{y}, \texttt{content}, \texttt{tooltipScale}, \texttt{tooltipTextSize}, \texttt{tooltipFont}). \\
+\bottomrule
+\end{longtable}
+
+\subsection{Preload Methods}
+These methods are registered to be used within the p5.js \texttt{preload()} function.
+
+\begin{description}
+    \item[\texttt{loadDataFrame(path, callback)}] \hfill \\
+    Loads a CSV file and converts it to a DataFrame. Returns a proxy object that mimics the Table/DataFrame structure.
+\end{description}
+
+\section{Data Structure: DataFrame}
+
+The \texttt{DataFrame} class is the core structure for data manipulation.
+
+\subsection{Constructor}
+\texttt{new p5.prototype.chart.DataFrame(data, [columns])}
+\begin{itemize}
+    \item \textbf{data}: Array of objects OR Array of Arrays.
+    \item \textbf{columns}: Array of strings (required if \texttt{data} is an Array of Arrays).
+\end{itemize}
+
+\subsection{Properties}
+\begin{itemize}
+    \item \textbf{columns}: Returns a copy of the column list.
+    \item \textbf{rows}: Returns a copy of the rows array.
+\end{itemize}
+
+\subsection{Methods}
+
+\begin{longtable}{p{6cm} p{9cm}}
+\toprule
+\textbf{Method Signature} & \textbf{Description} \\
+\midrule
+\texttt{col(name)} & Returns an array of values for the specified column. \\
+\midrule
+\texttt{filter(colNameOrFn, operator, value)} & Filters rows. Can use a function \texttt{(row) => bool}, or comparison syntax: \texttt{filter(Age, >, 25)}. Operators: \texttt{>}, \texttt{<}, \texttt{>=}, \texttt{<=}, \texttt{===}, \texttt{==}, \texttt{!==}, \texttt{!=}. \\
+\midrule
+\texttt{transform(colName, fn)} & Mutates the DataFrame by applying \texttt{fn(value)} to every entry in \texttt{colName}. \\
+\midrule
+\texttt{addColumn(colName, valueOrFn)} & Adds a column. \texttt{valueOrFn} can be a static value or a function \texttt{(row, index) => val}. \\
+\midrule
+\texttt{rename(oldName, newName)} & Renames a column in place. \\
+\midrule
+\texttt{select(columnNames)} & Returns a new DataFrame containing only the specified columns. \\
+\midrule
+\texttt{drop(columnNames)} & Returns a new DataFrame excluding the specified columns. \\
+\midrule
+\texttt{group(groupCols, agg)} & Groups data. \texttt{agg} can be a function or an object map (e.g., \texttt{\{Sales: sum\}}). Supported agg strings: \texttt{sum}, \texttt{mean}, \texttt{avg}, \texttt{min}, \texttt{max}, \texttt{count}. \\
+\midrule
+\texttt{pivot(indexCol, columnCol, valueCol, aggFunc)} & Creates a cross-tabulation. \texttt{aggFunc} defaults to \texttt{sum}. \\
+\midrule
+\texttt{sort(colName, order)} & Sorts rows. \texttt{order} is \texttt{ascending} (default) or \texttt{descending}. \\
+\midrule
+\texttt{head(n)} & Returns a new DataFrame with the first \texttt{n} rows (default 5). \\
+\midrule
+\texttt{tail(n)} & Returns a new DataFrame with the last \texttt{n} rows (default 5). \\
+\midrule
+\texttt{unique(colName)} & Returns an array of unique values in a column. \\
+\midrule
+\texttt{convertDate(colName, parserOrOptions)} & Converts a column to Date objects. \texttt{parserOrOptions} can be a format string, a parser function, or an object: \texttt{\{format, parser, output, unit, onInvalid\}}. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Helper Functions}
+\begin{description}
+    \item[\texttt{createDataFrame(data, cols)}] Alias for instantiating \texttt{new DataFrame}.
+    \item[\texttt{tableToDataFrame(pathOrTable, type, options)}] Converts a p5.Table or loads a file into a DataFrame.
+\end{description}
+
+\section{Chart Visualization Methods}
+
+All chart methods follow the signature \texttt{p5.method(data, options)}. The \texttt{data} argument accepts a DataFrame, an Array of objects, or a p5.Table. The \texttt{options} argument is a key--alue object that describes how the chart should look and behave.
+
+\subsection{Universal Layout \& Metadata Options}
+The following options apply to \textbf{all} chart types (Bar, Pie, Series, Scatter, Hist, Geo, Table).
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description / Default} \\
+\midrule
+\texttt{width} & Overrides canvas width. \\
+\texttt{height} & Overrides canvas height. \\
+\texttt{margin} & Object \texttt{\{top, right, bottom, left\}}. Defaults: \texttt{\{top:60, right:40, bottom:60, left:80\}}. \\
+\texttt{background} & Hex string, color object, or \texttt{transparent} / \texttt{none}. \\
+\texttt{font} & Font family string. \\
+\texttt{palette} & Array of hex strings for data coloring. \\
+\texttt{responsive} & Boolean. If false, disables mobile scaling logic. \\
+\texttt{mobilePadding} & Boolean. Force extra right padding on mobile. \\
+\texttt{responsiveScale} & Number. Multiplier (0.4 - 2.0) for responsive scaling. \\
+\texttt{autoFitCanvas} & Boolean. Overrides the global \texttt{autoFitCanvas} setting. \\
+\texttt{nanPolicy} & String: \texttt{warn}, \texttt{silent}, \texttt{strict}. \\
+\midrule
+\textbf{Titles \& Meta} & \\
+\texttt{title} & String. Main chart title. \\
+\texttt{titleSize} & Number (px). \\
+\texttt{titleX}, \texttt{titleY} & Number. Exact pixel overrides. \\
+\texttt{titleWrap} & Boolean. Default \texttt{true}. \\
+\texttt{subtitle} & String. Subtitle text. \\
+\texttt{subtitleSize} & Number (px). \\
+\texttt{subtitleBold} & Boolean. \\
+\texttt{subtitleX}, \texttt{subtitleY} & Number. Exact pixel overrides. \\
+\texttt{subtitleWrap} & Boolean. Default \texttt{true}. \\
+\texttt{source}, \texttt{author} & Strings. displayed in the footer. \\
+\texttt{showSourceAuthor} & Boolean. Enables footer. \\
+\texttt{sourceAuthorWrap} & Boolean. Wrap footer text. Default \texttt{true}. \\
+\texttt{sourceAuthorSize} & Number. \\
+\texttt{sourceAuthorX/Y} & Number. Exact pixel overrides. \\
+\texttt{textAlign} & p5 constants: \texttt{LEFT}, \texttt{CENTER}, \texttt{RIGHT}. \\
+\midrule
+\textbf{Legend} & \\
+\texttt{legend} & Boolean, String (\texttt{horizontal}/\texttt{vertical}), or Object \texttt{\{enabled, layout\}}. \\
+\texttt{legend.items} & If \texttt{legend} is an Object, \texttt{legend.items} can be provided as \texttt{[{label,color}, ...]} or \texttt{[Label, ...]}. \\
+\texttt{legendItems} & Array of objects \texttt{\{label, color\}}. \\
+\texttt{legendLabels} & Array of strings. \\
+\texttt{legendColors} & Array of colors. \\
+\texttt{legendTextSize} & Number. \\
+\texttt{legendBoxSize} & Number. \\
+\texttt{legendBarWidth} & Number. Width of gradient legend bar (used when a gradient legend is active). \\
+\texttt{legendBarHeight} & Number. Height of gradient legend bar (used when a gradient legend is active). \\
+\texttt{legendX}, \texttt{legendY} & Number. Exact pixel overrides. \\
+\texttt{legendTextColor} & Color. \\
+\midrule
+\textbf{Tooltips} & \\
+\texttt{tooltip} & Function for custom tooltip content. Signature varies by chart type; should return a string or array of strings. \\
+\texttt{tooltipColumns} & Array of objects \texttt{[{col, label}, ...]} used to build tooltip lines from row fields (or special tooltip columns per chart; see each chart section). Falls back to \texttt{chart.defaultTooltipColumns}. \\
+\texttt{tooltipScale} & Number. Scale multiplier. \\
+\texttt{tooltipTextSize} & Number (px). \\
+\texttt{tooltipFont} & String. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Axis Configuration Options}
+Applies to Cartesian charts (Bar, Series, Scatter, Hist, Table(search input)).
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{xLabel} & String. X-axis label. \\
+\texttt{yLabel} & String. Y-axis label. \\
+\texttt{axisLabelSize} & Number. \\
+\texttt{xLabelWrap} & Boolean. Default \texttt{true}. \\
+\texttt{yLabelWrap} & Boolean. Default \texttt{true}. \\
+\texttt{xLabelX}, \texttt{xLabelY} & Number. Exact pixel overrides. \\
+\texttt{yLabelX}, \texttt{yLabelY} & Number. Exact pixel overrides or padding adjustments. \\
+\texttt{yLabelGapToPlot} & Number. Distance between plot and Y-label. \\
+\texttt{yLabelGapToTicks} & Number. Distance between ticks and Y-label. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Bar Chart}
+\textbf{Method:} \texttt{bar(data, options)} \\
+\textbf{NaN Behavior:} Skips invalid bars.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{x} (or \texttt{category}) & Column name for categories. \\
+\texttt{y} (or \texttt{values}) & Column name or Array of names for values. \\
+\texttt{orientation} & \texttt{horizontal} (default) or \texttt{vertical}. \\
+\texttt{mode} & \texttt{stacked} or default grouped. \\
+\texttt{labelPos} & \texttt{auto}, \texttt{inside}, \texttt{outside}, \texttt{bottom}, \texttt{none}. \\
+\texttt{labelBold} & Boolean. \\
+\texttt{labelSpace} & Number. Fixed space for labels (horizontal bars). \\
+\texttt{numTicks} / \texttt{tickCount} & Target number of ticks. \\
+\texttt{showGrid} / \texttt{grid} & Boolean. \\
+\texttt{gridColor} / \texttt{gridColour} & Color string. \\
+\texttt{gridWeight} & Number. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Pie Chart}
+\textbf{Method:} \texttt{pie(data, options)} \\
+\textbf{NaN Behavior:} Defaults to \texttt{strict} (Error). Can be set to \texttt{warn}.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{label} & Column name for slice labels. \\
+\texttt{value} & Column name for slice values. \\
+\texttt{style} & \texttt{pie} (default) or \texttt{donut}. \\
+\texttt{radius} & Number. Radius in pixels. \\
+\texttt{holeRadius} & Number (0.0 - 1.0). Default 0.6. \\
+\texttt{labelSize} & Number. Overrides default pie label font size. \\
+\texttt{labelPos} & \texttt{inside}, \texttt{outside}, \texttt{none}. \\
+\texttt{labelContent} & \texttt{value}, \texttt{percent}, \texttt{name\_value}, \texttt{name\_percent}, \texttt{all} (alias \texttt{name\_value\_percent}). \\
+\texttt{showConnectors} & Boolean. Draws lines for outside labels. \\
+\texttt{lineColor} & Stroke color. \\
+\texttt{lineSize} & Stroke weight. \\
+\texttt{outsideLabelMaxWidth} & Number. Max width for truncated outside labels. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Series (Line) Chart}
+\textbf{Method:} \texttt{series(data, options)} \\
+\textbf{NaN Behavior:} Creates a break (gap) in the line.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{x} & Column name for X-axis. \\
+\texttt{y} & Column name or Array of names for Y-axis. \\
+\texttt{minX}, \texttt{maxX} & Number. Manual X-axis bounds. \\
+\texttt{minY}, \texttt{maxY} & Number. Manual Y-axis bounds. \\
+\texttt{lineSize} & Number. Line stroke weight. \\
+\texttt{pointSize} & Number. Point diameter. \\
+\texttt{dots} & Boolean. Default \texttt{true}. \\
+\texttt{pointStyle} & \texttt{filled} (default) or \texttt{hollow}. \\
+\texttt{showValues} & \texttt{true}, \texttt{false}, or \texttt{click}. \\
+\texttt{labelPos} & \texttt{auto}, \texttt{bottom}. \\
+\texttt{seriesTooltipColumn} & String. If set and \texttt{tooltipColumns} is not provided, uses \texttt{row[seriesTooltipColumn]} as a single-line tooltip label on hover. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Scatter Plot}
+\textbf{Method:} \texttt{scatter(data, options)} \\
+\textbf{NaN Behavior:} Skips points with NaN X or Y values.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{x} & Column name for X-axis. \\
+\texttt{y} & Column name for Y-axis. \\
+\texttt{size} & Column name for variable point size. \\
+\texttt{color} & Column name for variable point color (Numeric or Categorical). \\
+\texttt{minSize}, \texttt{maxSize} & Number. Pixel range for variable sizing. \\
+\texttt{pointSize} & Number. Fixed size if \texttt{size} column is not used. \\
+\texttt{minX}, \texttt{maxX} & Number. Manual X-axis bounds. \\
+\texttt{minY}, \texttt{maxY} & Number. Manual Y-axis bounds. \\
+\texttt{connect} & Boolean. Draws a line connecting points in order. \\
+\texttt{lineColor} & Color. Used if \texttt{connect} is true. \\
+\texttt{lineSize} & Number. Stroke weight of connecting line (when \texttt{connect} is true). \\
+\texttt{baseColor} & Color. Used if \texttt{color} column is not used. \\
+\texttt{pointStyle} & \texttt{filled} (default) or \texttt{hollow}. \\
+\texttt{showValues} & \texttt{true}, \texttt{false}, or \texttt{click}. \\
+\texttt{labelPos} & \texttt{auto} (default) or \texttt{bottom}. Controls value label placement when \texttt{showValues} is enabled. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Histogram}
+\textbf{Method:} \texttt{hist(data, options)} \\
+\textbf{NaN Behavior:} Filters out NaN values before binning.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{x} (or \texttt{column}) & Column name to analyze. \\
+\texttt{bins} & Number. Target bin count. Default 10. \\
+\texttt{showLabels} & Boolean. Show counts above bars. Default \texttt{true}. \\
+\texttt{borderColor} & Color string. \\
+\texttt{borderWeight} & Number. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Table}
+\textbf{Method:} \texttt{table(data, options)} \\
+\textbf{NaN Behavior:} Displays "—" in gray.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{x}, \texttt{y} & Number. Canvas coordinates. \\
+\texttt{width} & Number. Table width. \\
+\texttt{maxRows} & Number. Rows per page. Default 10. \\
+\texttt{searchable} & Boolean. Adds search input. Default \texttt{true} if rows > 10. \\
+\texttt{sortable} & Boolean. Click headers to sort. Default \texttt{true}. \\
+\texttt{pagination} & Boolean. Show controls. Default \texttt{true} if rows > 10. \\
+\texttt{page} & Number. Current page index. \\
+\texttt{onPageChange} & Function callback. \\
+\texttt{id} & String. DOM ID for search input. \\
+\texttt{headerColor} & Color. \\
+\texttt{rowColor1}, \texttt{rowColor2} & Colors for alternating rows. \\
+\texttt{hoverColor} & Color. \\
+\texttt{borderColor} & Color. Table border color. \\
+\texttt{nanIndicator} & Boolean. Default \texttt{true}. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chart-Specific: Geo Chart}
+\textbf{Method:} \texttt{geo(data, options)} \\
+\textbf{NaN Behavior:} Skips points with invalid Lat/Lon.
+
+\begin{longtable}{p{5cm} p{10cm}}
+\toprule
+\textbf{Option Key} & \textbf{Description} \\
+\midrule
+\texttt{lat} (or \texttt{latitude}) & Column name. \\
+\texttt{lon} (or \texttt{longitude}) & Column name. \\
+\texttt{label} & Column name for labels. \\
+\texttt{value} & Column name for values (used in tooltips). \\
+\texttt{centerLat}, \texttt{centerLon} & Number. Initial map center. Auto-calculated if omitted. \\
+\texttt{zoom} & Number (2-18). Initial zoom. Auto-calculated if omitted. \\
+\texttt{pointColor} & Color. \\
+\texttt{pointSize} & Number. \\
+\texttt{showLabels} & Boolean. Default \texttt{true}. \\
+\texttt{showControls} & Boolean. Display Zoom/Pan help box. \\
+\bottomrule
+\end{longtable}
+
+\section{Export Utilities}
+
+\begin{description}
+    \item[\texttt{toPNG(filename)}] \hfill \\
+    Exports the current canvas as a PNG. Default filename: \texttt{chart.png}.
+    
+    \item[\texttt{toCSV(data, filename, options)}] \hfill \\
+    Exports data to a CSV file.
+    \begin{itemize}
+        \item \textbf{data}: DataFrame, Array, or Object.
+        \item \textbf{filename}: Default \texttt{data.csv}.
+        \item \textbf{options}:
+        \begin{itemize}
+            \item \texttt{delimiter}: Default \texttt{,}.
+            \item \texttt{includeHeader}: Boolean. Default \texttt{true}.
+            \item \texttt{columns}: Array of column names to include.
+        \end{itemize}
+    \end{itemize}
+\end{description}
+
+\end{document}
