@@ -16,7 +16,7 @@ Install via npm:
 npm install p5.chart
 ```
 
-Then create an `index.html` file like this:
+Then create an `html` file like this:
 
 ```html
 <!DOCTYPE html>
@@ -34,13 +34,13 @@ You can now create a `sketch.js` file to build your charts.
 
 ### 2. CDN
 
-Create an `index.html` file like this (include p5.js first, then p5.chart.js):
+Create an `html` file like this (include p5.js first, then p5.chart.js):
 
 ```html
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://cdn.jsdelivr.net/npm/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5.chart/p5.chart.js"></script>
     <script src="sketch.js"></script>
   </head>
@@ -52,7 +52,7 @@ You can now create a `sketch.js` file to build your charts.
 
 ### 3. Local File
 
-Download `p5.chart.js` and `libraries/p5.min.js`, place them in your project folder, and create an `index.html` file like this:
+Download `p5.chart.js` and `libraries/p5.min.js`, place them in your project folder, and create an `html` file like this:
 
 ```html
 <!DOCTYPE html>
