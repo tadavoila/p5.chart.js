@@ -1,6 +1,6 @@
 # p5.chart.js
 
-**Interactive, Mobile-Responsive Data Visualization Library**
+**Interactive, Mobile-Responsive Data Visualization Library for p5.js**
 
 *By: Siddharth Chattoraj*
 
