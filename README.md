@@ -4,6 +4,42 @@
 
 *By: Siddharth Chattoraj*
 
+
+## Installation
+
+You only need to use **one** of the following methods:
+
+### 1. NPM
+
+Install via npm:
+
+```sh
+npm install p5.chart
+```
+
+Then import in your project:
+
+```js
+import "p5.chart";
+```
+
+### 2. CDN
+
+Add the following script tag to your HTML (after p5.js):
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/p5.chart/p5.chart.js"></script>
+```
+
+### 3. Local File
+
+Download `p5.chart.js`, place it in your project folder, and include it after `p5.js`:
+
+```html
+<script src="p5.min.js"></script>
+<script src="p5.chart.js"></script>
+```
+
 ## Directory
 
 `documentation`: Folder containing comprehensive methods exposed to user in both .pdf and .tex form.
