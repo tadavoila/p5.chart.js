@@ -40,6 +40,11 @@ Download `p5.chart.js`, place it in your project folder, and include it after `p
 <script src="p5.chart.js"></script>
 ```
 
+
+### 4. Clone or Download the Repo
+
+Clone or download this repository and start experimenting directly in `sketch.js`. This option is useful for quickly exploring examples or modifying charts without setting up a separate project.
+
 ## Directory
 
 `documentation`: Folder containing comprehensive methods exposed to user in both .pdf and .tex form.
