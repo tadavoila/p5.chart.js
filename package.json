@@ -1,0 +1,13 @@
+{
+  "name": "p5.chart",
+  "version": "0.1.0",
+  "description": "An interactive, mobile-responsive data visualization library for p5.js",
+  "main": "p5.chart.js",
+  "keywords": ["p5", "p5js", "charts", "data-visualization"],
+  "author": "Siddharth Chattoraj",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tadavoila/p5.chart.js"
+  }
+}
