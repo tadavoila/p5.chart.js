@@ -18,8 +18,6 @@
 
 `logo`: Contains the logo for submission to the Processing Foundation
 
-`mat236_presentation_materials:` Contains the proposal in written form and the presentation for the critique. The project description/reflection is located in the Google Drive. 
-
 `p5.chart.js`: Library
 
 `sketch.js`: Build your own charts in this template file
