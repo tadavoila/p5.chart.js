@@ -4,7 +4,6 @@
 
 *By: Siddharth Chattoraj*
 
-
 ## Installation
 
 You only need to use **one** of the following methods:
@@ -25,9 +24,10 @@ import "p5.chart";
 
 ### 2. CDN
 
-Add the following script tag to your HTML (after p5.js):
+Add the following script tags to your HTML (include p5.js first, then p5.chart.js):
 
 ```html
+<script src="https://cdn.jsdelivr.net/npm/p5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/p5.chart/p5.chart.js"></script>
 ```
 
@@ -39,7 +39,6 @@ Download `p5.chart.js`, place it in your project folder, and include it after `p
 <script src="p5.min.js"></script>
 <script src="p5.chart.js"></script>
 ```
-
 
 ### 4. Clone or Download the Repo
 
