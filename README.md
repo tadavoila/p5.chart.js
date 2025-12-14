@@ -16,29 +16,57 @@ Install via npm:
 npm install p5.chart
 ```
 
-Then import in your project:
+Then create an `index.html` file like this:
 
-```js
-import "p5.chart";
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <script src="node_modules/p5.chart/p5.chart.js"></script>
+    <script src="sketch.js"></script>
+  </head>
+  <body></body>
+</html>
 ```
+
+You can now create a `sketch.js` file to build your charts.
 
 ### 2. CDN
 
-Add the following script tags to your HTML (include p5.js first, then p5.chart.js):
+Create an `index.html` file like this (include p5.js first, then p5.chart.js):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/p5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/p5.chart/p5.chart.js"></script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5.chart/p5.chart.js"></script>
+    <script src="sketch.js"></script>
+  </head>
+  <body></body>
+</html>
 ```
+
+You can now create a `sketch.js` file to build your charts.
 
 ### 3. Local File
 
-Download `p5.chart.js`, place it in your project folder, and include it after `p5.js`:
+Download `p5.chart.js` and `libraries/p5.min.js`, place them in your project folder, and create an `index.html` file like this:
 
 ```html
-<script src="p5.min.js"></script>
-<script src="p5.chart.js"></script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="p5.min.js"></script>
+    <script src="p5.chart.js"></script>
+    <script src="sketch.js"></script>
+  </head>
+  <body></body>
+</html>
 ```
+
+You can now create a `sketch.js` file to build your charts.
 
 ### 4. Clone or Download the Repo
 
